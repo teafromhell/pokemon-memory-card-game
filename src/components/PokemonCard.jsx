@@ -1,10 +1,11 @@
 /* eslint-disable no-unused-vars */
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Card from "./Card";
 import "./PokemonCard.scss";
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 import End from "./End";
+import RandomizeChoice from "./RandomizeChoice";
 
 function PokemonCard() {
   const [pokemons, setPokemon] = useState([]);
@@ -13,36 +14,79 @@ function PokemonCard() {
   const [isLoading, setLoading] = useState(false);
   const [callEnd, setCallEnd] = useState(false);
 
-  if (isLoading) {
-    return <div className="app">Loading</div>;
-  }
-  const fetchData = async () => {
+  const [storeId, setStoreId] = useState([]);
+  
+
+  useEffect(() => {
+    for (let i = 0; i < 3; i++) {
+      setStoreId((current) => [...current, Math.floor(Math.random() * 896)]);
+    }
+  }, []);
+
+
+
+
+
+  // const fetchData = async () => {
+  //   if (pokemons) {
+  //     setPokemon([]);
+  //     setCount(2);
+  //     setCallEnd(false);
+  //   }
+  //   const response = await axios.get(
+  //     `https://pokeapi.co/api/v2/pokemon?limit=3`
+  //   );
+  //   const data = await response.data.results;
+
+  //   function getPoke(data) {
+  //     data.forEach(async (item) => {
+  //       const res = await axios.get(
+  //         `https://pokeapi.co/api/v2/pokemon/${item.name}`
+  //       );
+  //       const data = await res.data;
+  //       setPokemon((current) => [
+  //         ...current,
+  //         { ...data, matched: false, active: false, fail: false, id: uuidv4() },
+  //         { ...data, matched: false, active: false, fail: false, id: uuidv4() },
+  //       ]);
+  //     });
+  //   }
+  //   getPoke(data);
+  // };
+  const fetchRandom = async () => {
+    
     if (pokemons) {
       setPokemon([]);
       setCount(2);
       setCallEnd(false);
+      setStoreId([]);
     }
-    const response = await axios.get(
-      `https://pokeapi.co/api/v2/pokemon?limit=3`
-    );
-    const data = await response.data.results;
 
-    function getPoke(data) {
-      data.forEach(async (item) => {
-        const res = await axios.get(
-          `https://pokeapi.co/api/v2/pokemon/${item.name}`
+    for (let i = 0; i < 6; i++) {
+      setStoreId((current) => [...current, Math.floor(Math.random() * 896)]);
+    }
+    function getRandomPoke() {
+      storeId.forEach(async (item) => {
+        const resp = await axios.get(
+          `https://pokeapi.co/api/v2/pokemon/${item}`
         );
-        const data = await res.data;
+        const data = await resp.data;
         setPokemon((current) => [
           ...current,
           { ...data, matched: false, active: false, fail: false, id: uuidv4() },
           { ...data, matched: false, active: false, fail: false, id: uuidv4() },
         ]);
+        setLoading(false)
+          
+        
       });
-    }
-    getPoke(data);
+      
+      setLoading(true)
+    } 
+    
+    getRandomPoke();
+    
   };
-
   function check(current) {
     if (pokemons[current].name === pokemons[prev].name) {
       pokemons[current].active = true;
@@ -51,9 +95,10 @@ function PokemonCard() {
       setPokemon([...pokemons]);
       setPrev(-1);
       setCount(count + 2);
-      console.log(count, pokemons.length);
       if (count === pokemons.length) {
-        setCallEnd(true);
+        setTimeout(() => {
+          setCallEnd(true);
+        }, 700);
       }
     } else {
       pokemons[current].active = true;
@@ -82,33 +127,53 @@ function PokemonCard() {
       check(id);
     }
   }
-
+  // if (isLoading) {
+  //   return <div className="game">Loading</div>;
+  // }
   return (
     <>
-    {callEnd && <End  fetchData={fetchData} />}
-    <div className="game">
-      <button className="game__start-btn" onClick={() => fetchData()}>
-        Start
-      </button>
+      {callEnd && <End fetchData={fetchRandom} />}
+      {/* <button onClick={() => fetchRandom()}>Random</button> */}
+      <div className="game">
+        <button className="game__start-btn" onClick={() => fetchRandom()}>
+          Start
+        </button>
+       {/* { pokemons
+            .sort((a, b) => (a.id > b.id ? 1 : -1))
+            .map((item, index) => {
+              return (
+                <Card
+                  img={item.sprites.front_default}
+                  matched={item.matched}
+                  active={item.active}
+                  name={item.name}
+                  id={index}
+                  handleClick={handleClick}
+                  type={item.types[0].type.name}
+                />);
+              })} */}
 
-      
-
-      {pokemons
-        .sort((a, b) => (a.id > b.id ? 1 : -1))
-        .map((item, index) => {
-          return (
-            <Card
-              img={item.sprites.front_default}
-              matched={item.matched}
-              active={item.active}
-              name={item.name}
-              id={index}
-              handleClick={handleClick}
-              type={item.types[0].type.name}
-            />
-          );
-        })}
-    </div>
+        {!isLoading ? (
+          pokemons
+            .sort((a, b) => (a.id > b.id ? 1 : -1))
+            .map((item, index) => {
+              return (
+                <Card
+                  img={item.sprites.front_default}
+                  matched={item.matched}
+                  active={item.active}
+                  name={item.name}
+                  id={index}
+                  handleClick={handleClick}
+                  type={item.types[0].type.name}
+                  isLoading={isLoading}
+                />
+              );
+            })
+        ) : (
+          <div></div>
+        )}
+      </div>
     </>
   );
 }

@@ -4,8 +4,11 @@
   scroll-behavior: smooth;
   box-sizing: border-box;
   font-family: Georgia, 'Times New Roman', Times, serif;
+  -webkit-tap-highlight-color: transparent;
 }
 
 
-
+body {
+  background-color: rgb(249, 246, 241);
+}
 
