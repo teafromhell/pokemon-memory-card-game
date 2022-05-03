@@ -19,9 +19,7 @@ function Card({
           whileHover={{
             scale: 1.02,
           }}
-          whileTap={{
-            rotateY: 180,
-          }}
+          
           onClick={() => handleClick(id)}
           className={`card   ${active ? "card--active" : ""} ${
             active ? type : ""
