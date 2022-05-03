@@ -1,18 +1,26 @@
 .card {
-  border: 1px solid black;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
 
   cursor: pointer;
+  background-color: #ebbb60;
 
+  border-radius: 10px;
   
 }
 
 .card--matched {
   background-color: aqua;
+  pointer-events: none;
 }
+
+.card--active {
+  pointer-events: none;
+}
+
+
 
 .card__img {
   visibility: hidden;
@@ -22,3 +30,5 @@
   visibility: visible;
   pointer-events: none;
 }
+
+

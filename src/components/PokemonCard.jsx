@@ -1,13 +1,27 @@
+/* eslint-disable no-unused-vars */
 import React, { useState } from "react";
 import Card from "./Card";
 import "./PokemonCard.scss";
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
+import End from "./End";
 
 function PokemonCard() {
   const [pokemons, setPokemon] = useState([]);
   const [prev, setPrev] = useState(-1);
+  const [count, setCount] = useState(2);
+  const [isLoading, setLoading] = useState(false);
+  const [callEnd, setCallEnd] = useState(false);
+
+  if (isLoading) {
+    return <div className="app">Loading</div>;
+  }
   const fetchData = async () => {
+    if (pokemons) {
+      setPokemon([]);
+      setCount(2);
+      setCallEnd(false);
+    }
     const response = await axios.get(
       `https://pokeapi.co/api/v2/pokemon?limit=3`
     );
@@ -28,78 +42,19 @@ function PokemonCard() {
     }
     getPoke(data);
   };
-  // const [lastName, setLastName] = useState('')
-
-  // useEffect(()=>{
-  //     pokemons.forEach((item)=>{
-
-  //         setLastName(item.name)
-  //     })
-  // },[openCard])
-
-  //   function timeout(ms){
-  //     return new Promise(resolve => setTimeout(resolve, ms))
-  //   }
-
-  //   const checkCard = () => {
-  //       console.log(pokemon.name)
-  //     setPokemon(
-  //       pokemons.map((item) => {
-  //         if (item.id === pokemon.id) {
-  //           return { ...item, active: true };
-  //         }
-  //         return item;
-  //       })
-  //     );
-
-  //     if (check === "") {
-  //       pokemons.forEach((item) => {
-  //         if (item.id === pokemon.id) {
-  //           setCheck(item);
-  //         }
-  //       });
-  //     } else {
-  //       setPokemon(
-  //         pokemons.filter(
-  //           (item) =>
-  //             item.id !== pokemon.id &&
-  //             item.order !== check.order
-  //         )
-  //       );
-  //       setCheck("");
-  //   setPokemon(
-  //     pokemons.map((item) => {
-  //       if (item.id === pokemon.id && pokemon.name === check.name) {
-
-  //         return { ...item, matched: true, active: true };
-  //       }
-  //       setCheck('')
-  //       return item
-  //     })
-  //   );
-  //     }
-  //   };
-
-  //   setPokemon(pokemons.map((el)=>{
-  //     if (el.id === check.id) {
-  //         console.log(check.name)
-  //         return {...el, matched: true, active: true}
-  //     }
-  //     return el
-  // }))
 
   function check(current) {
-    console.log(
-      "current + order " + current,
-      pokemons[current].name,
-      pokemons[prev].name
-    );
     if (pokemons[current].name === pokemons[prev].name) {
       pokemons[current].active = true;
       pokemons[current].matched = true;
       pokemons[prev].matched = true;
       setPokemon([...pokemons]);
       setPrev(-1);
+      setCount(count + 2);
+      console.log(count, pokemons.length);
+      if (count === pokemons.length) {
+        setCallEnd(true);
+      }
     } else {
       pokemons[current].active = true;
       pokemons[current].fail = true;
@@ -119,29 +74,25 @@ function PokemonCard() {
   }
 
   function handleClick(id) {
-    //console.log(pokemons[id])
-    console.log("_________ " + id);
-    console.log("name " + pokemons[id].name);
-    //const index = pokemons[order].order;
-
     if (prev === -1) {
       pokemons[id].active = true;
-      console.log(pokemons[id].active);
       setPokemon([...pokemons]);
       setPrev(id);
-      console.log("prevOrder" + prev);
     } else {
-      console.log("prev before" + prev);
       check(id);
-      console.log("prev " + prev);
     }
   }
 
   return (
     <>
-      <button className="app__start-btn" onClick={() => fetchData()}>
+    {callEnd && <End  fetchData={fetchData} />}
+    <div className="game">
+      <button className="game__start-btn" onClick={() => fetchData()}>
         Start
       </button>
+
+      
+
       {pokemons
         .sort((a, b) => (a.id > b.id ? 1 : -1))
         .map((item, index) => {
@@ -153,9 +104,11 @@ function PokemonCard() {
               name={item.name}
               id={index}
               handleClick={handleClick}
+              type={item.types[0].type.name}
             />
           );
         })}
+    </div>
     </>
   );
 }
