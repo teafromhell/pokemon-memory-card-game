@@ -5,7 +5,7 @@ function End({fetchData}) {
   return (
     <div className='end'>
         <div className='end__window'>
-        <b>Win</b>
+        <b>You match all Pokemon</b>
         <button onClick={fetchData} >Play again?</button>
         </div>
     </div>
