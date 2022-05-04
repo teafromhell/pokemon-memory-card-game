@@ -16,6 +16,7 @@
 
 .card--matched {
   outline: 2px solid gold !important;
+  border-radius: 10px;
   pointer-events: none;
 }
 
@@ -26,6 +27,7 @@
 }
 
 .card__img {
+  padding: 0 5px;
   visibility: hidden;
   transform: scale(0);
   pointer-events: none;
@@ -40,7 +42,7 @@
 }
 
 .rock {
-  background-color: rgb(148, 81, 81);
+  background-color: rgba(148, 81, 81, 0.6);
 }
 .ghost {
   background-color: rgb(247, 247, 247);
@@ -68,4 +70,28 @@
 }
 .water {
   background-color: #e0f1fd;
+}
+.ice {
+  background-color: #c7fcec;
+}
+.ground {
+  background-color: #867365;
+}
+.psychic {
+  background-color: #7c759f;
+}
+.dark {
+  background-color: #36373c;
+}
+.steel {
+  background-color: #ddd5ce;
+}
+.dragon {
+  background-color: #e1b7b8;
+}
+.fighting {
+  background-color: #a1d3c2;
+}
+.flying {
+  background-color: #b8dadb;
 }

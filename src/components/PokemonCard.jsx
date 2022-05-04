@@ -5,7 +5,6 @@ import "./PokemonCard.scss";
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 import End from "./End";
-import RandomizeChoice from "./RandomizeChoice";
 
 function PokemonCard() {
   const [pokemons, setPokemon] = useState([]);
@@ -15,7 +14,7 @@ function PokemonCard() {
   const [callEnd, setCallEnd] = useState(false);
 
   const [storeId, setStoreId] = useState([]);
-  
+  const [inactive, setInactive] = useState(false);
 
   useEffect(() => {
     for (let i = 0; i < 3; i++) {
@@ -23,38 +22,7 @@ function PokemonCard() {
     }
   }, []);
 
-
-
-
-
-  // const fetchData = async () => {
-  //   if (pokemons) {
-  //     setPokemon([]);
-  //     setCount(2);
-  //     setCallEnd(false);
-  //   }
-  //   const response = await axios.get(
-  //     `https://pokeapi.co/api/v2/pokemon?limit=3`
-  //   );
-  //   const data = await response.data.results;
-
-  //   function getPoke(data) {
-  //     data.forEach(async (item) => {
-  //       const res = await axios.get(
-  //         `https://pokeapi.co/api/v2/pokemon/${item.name}`
-  //       );
-  //       const data = await res.data;
-  //       setPokemon((current) => [
-  //         ...current,
-  //         { ...data, matched: false, active: false, fail: false, id: uuidv4() },
-  //         { ...data, matched: false, active: false, fail: false, id: uuidv4() },
-  //       ]);
-  //     });
-  //   }
-  //   getPoke(data);
-  // };
   const fetchRandom = async () => {
-    
     if (pokemons) {
       setPokemon([]);
       setCount(2);
@@ -73,21 +41,19 @@ function PokemonCard() {
         const data = await resp.data;
         setPokemon((current) => [
           ...current,
-          { ...data, matched: false, active: false, fail: false, id: uuidv4() },
-          { ...data, matched: false, active: false, fail: false, id: uuidv4() },
+          { ...data, matched: false, active: false, id: uuidv4() },
+          { ...data, matched: false, active: false, id: uuidv4() },
         ]);
-        setLoading(false)
-          
-        
+        setLoading(false);
       });
-      
-      setLoading(true)
-    } 
-    
+
+      setLoading(true);
+    }
+
     getRandomPoke();
-    
   };
   function check(current) {
+    setInactive(true);
     if (pokemons[current].name === pokemons[prev].name) {
       pokemons[current].active = true;
       pokemons[current].matched = true;
@@ -95,6 +61,7 @@ function PokemonCard() {
       setPokemon([...pokemons]);
       setPrev(-1);
       setCount(count + 2);
+      setInactive(false);
       if (count === pokemons.length) {
         setTimeout(() => {
           setCallEnd(true);
@@ -102,16 +69,13 @@ function PokemonCard() {
       }
     } else {
       pokemons[current].active = true;
-      pokemons[current].fail = true;
-      pokemons[prev].fail = true;
       setPokemon([...pokemons]);
       setTimeout(() => {
-        pokemons[current].fail = false;
         pokemons[current].matched = false;
         pokemons[current].active = false;
-        pokemons[prev].fail = false;
         pokemons[prev].matched = false;
         pokemons[prev].active = false;
+        setInactive(false);
         setPokemon([...pokemons]);
         setPrev(-1);
       }, 1000);
@@ -127,31 +91,13 @@ function PokemonCard() {
       check(id);
     }
   }
-  // if (isLoading) {
-  //   return <div className="game">Loading</div>;
-  // }
   return (
     <>
       {callEnd && <End fetchData={fetchRandom} />}
-      {/* <button onClick={() => fetchRandom()}>Random</button> */}
-      <div className="game">
+      <div className={`game ${inactive ? "game--inactive" : ""}`}>
         <button className="game__start-btn" onClick={() => fetchRandom()}>
           Start
         </button>
-       {/* { pokemons
-            .sort((a, b) => (a.id > b.id ? 1 : -1))
-            .map((item, index) => {
-              return (
-                <Card
-                  img={item.sprites.front_default}
-                  matched={item.matched}
-                  active={item.active}
-                  name={item.name}
-                  id={index}
-                  handleClick={handleClick}
-                  type={item.types[0].type.name}
-                />);
-              })} */}
 
         {!isLoading ? (
           pokemons
@@ -167,6 +113,7 @@ function PokemonCard() {
                   handleClick={handleClick}
                   type={item.types[0].type.name}
                   isLoading={isLoading}
+                  inactive={item.inactive}
                 />
               );
             })
