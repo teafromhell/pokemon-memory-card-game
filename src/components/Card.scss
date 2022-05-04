@@ -11,7 +11,17 @@
   transition: outline 0.5s;
   transition: background-color 0.2s;
 
-  outline: none;
+  
+
+  &:hover {
+    transform: scale(1.02);
+  }
+}
+
+.card--stop-hover {
+  &:hover {
+    transform: none;
+  }
 }
 
 .card--matched {

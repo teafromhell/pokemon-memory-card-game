@@ -10,24 +10,29 @@ function Card({
   id,
   type,
   isLoading,
+  name,
+  visible,
 }) {
   return (
     <>
       {!isLoading ? (
-        <motion.div
-          whileHover={{
-            scale: 1.02,
-          }}
+        <div
           onClick={() => handleClick(id)}
           className={`card   
-          ${active ? "card--active" : ""} ${
-            active ? type : ""
-          } ${matched ? "card--matched" : ""}`}
+          ${active ? "card--active" : ""} ${active || visible ? type : ""} ${
+            matched ? "card--matched" : ""
+          }
+          ${visible ? "card--stop-hover" : ""}
+          `}
         >
-          <div className={`card__img ${active ? "card__img--active" : ""}`}>
+          <div
+            className={`card__img ${
+              active || visible ? "card__img--active" : ""
+            }`}
+          >
             <img src={img} alt="pokemon" />
           </div>
-        </motion.div>
+        </div>
       ) : (
         <div>Loading</div>
       )}

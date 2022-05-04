@@ -15,6 +15,7 @@ function PokemonCard() {
 
   const [storeId, setStoreId] = useState([]);
   const [inactive, setInactive] = useState(false);
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     for (let i = 0; i < 3; i++) {
@@ -94,11 +95,15 @@ function PokemonCard() {
   return (
     <>
       {callEnd && <End fetchData={fetchRandom} />}
-      <div className={`game ${inactive ? "game--inactive" : ""}`}>
-        <button className="game__start-btn" onClick={() => fetchRandom()}>
+      <div className="btn-container">
+        <button className="start-btn" onClick={() => fetchRandom()}>
           Start
         </button>
-
+        <button onClick={() => setVisible(!visible)} className="show-btn">
+          X-ray
+        </button>
+      </div>
+      <div className={`game ${inactive ? "game--inactive" : ""}`}>
         {!isLoading ? (
           pokemons
             .sort((a, b) => (a.id > b.id ? 1 : -1))
@@ -114,6 +119,7 @@ function PokemonCard() {
                   type={item.types[0].type.name}
                   isLoading={isLoading}
                   inactive={item.inactive}
+                  visible={visible}
                 />
               );
             })

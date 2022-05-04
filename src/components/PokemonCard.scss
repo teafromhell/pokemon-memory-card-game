@@ -7,7 +7,6 @@
   height: auto;
 
   padding: 5px;
-
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(4, 1fr);
@@ -17,14 +16,30 @@
 .game--inactive {
   pointer-events: none;
 }
-.game__start-btn {
-  position: absolute;
-  top: 0;
+
+.btn-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: baseline;
+  width: 300px;
+  margin-top: 1rem;
+}
+.start-btn {
   font-size: 20px;
-  margin-top: -3rem;
-  left: 50%;
+
   padding: 7px 20px;
-  transform: translateX(-50%);
+  border-radius: 4px;
+  cursor: pointer;
+  background-color: hsl(0, 0%, 100%);
+  color: #000;
+  border: none;
+  outline: 1px solid #000;
+}
+
+.show-btn {
+  font-size: 20px;
+  padding: 7px 20px;
   border-radius: 4px;
   cursor: pointer;
   background-color: hsl(0, 0%, 100%);
